@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.icexmoon.mvcdemo.mapper.UserMapper">
+    <update id="update">
+        update tb_user as u
+        <set>
+            <if test="addr!=null and addr!=''">
+                u.addr=#{addr},
+            </if>
+            <if test="gender!=null and gender!=''">
+                u.gender=#{gender},
+            </if>
+            <if test="password!=null and password!=''">
+                u.password=#{password},
+            </if>
+            <if test="userName!=null and userName!=''">
+                u.username=#{userName}
+            </if>
+        </set>
+        where u.id = #{id}
+    </update>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_user(username, password, gender, addr)
+        values (#{userName}, #{password}, #{gender}, #{addr})
+    </insert>
+</mapper>
