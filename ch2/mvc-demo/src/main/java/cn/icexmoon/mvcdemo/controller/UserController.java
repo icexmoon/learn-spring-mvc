@@ -9,9 +9,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -142,4 +145,74 @@ public class UserController {
     public String helloPage(){
         return "index.jsp";
     }
+
+    @GetMapping("/url1")
+    public String url1(HttpServletRequest request){
+        request.setAttribute("msg", "hello");
+        // 转发到 url2
+        return "/user/url2";
+    }
+
+    @GetMapping("/url2")
+    public String url2(HttpServletRequest request){
+        // 获取域中的属性
+        String msg = (String) request.getAttribute("msg");
+        System.out.println(msg);
+        return "/index.jsp";
+    }
+
+    @GetMapping("/url3")
+    public String url3(HttpServletRequest request){
+        request.setAttribute("msg", "hello");
+        // 转发到 url2
+        return "/user/url2";
+    }
+
+    @GetMapping("/url4")
+    public String url4(@RequestAttribute("msg") String msg){
+        // 获取域中的属性
+        System.out.println(msg);
+        return "/index.jsp";
+    }
+
+    @GetMapping("/request")
+    public void request(HttpServletRequest request){
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()){
+            String headerName = headerNames.nextElement();
+            System.out.println(headerName);
+        }
+    }
+
+    @GetMapping("/header")
+    public void header(@RequestHeader("Accept-Language") String al){
+        System.out.println(al);
+    }
+
+    @GetMapping("/allHeaders")
+    public void allHeaders(@RequestHeader Map<String,String> headers){
+        headers.forEach((name,values)->{
+            System.out.printf("%s:%s%n", name, values);
+        });
+    }
+
+    @GetMapping("/cookie")
+    public void cookie(@CookieValue("JSESSIONID") String sessionId){
+        System.out.println(sessionId);
+    }
+
+    @GetMapping("/session/write")
+    public String writeSession(HttpServletRequest request){
+        request.getSession().setAttribute("username", "icexmoon");
+        request.getSession().setAttribute("msg", "hello");
+        return "redirect:/user/session/read";
+    }
+
+    @GetMapping("/session/read")
+    @ResponseBody
+    public String readSession(@SessionAttribute("username") String username){
+        System.out.println(username);
+        return "";
+    }
 }
+
